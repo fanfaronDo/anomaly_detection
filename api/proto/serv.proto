@@ -1,0 +1,13 @@
+syntax = "proto3";
+option go_package = "main/pkg/api;api";
+package api;
+
+service DataService {
+  rpc GenerateData(stream DataEntry) returns (stream DataEntry);
+}
+
+message DataEntry {
+  string session_id = 1;
+  double frequency = 2;
+  int64 timestamp = 3;
+}

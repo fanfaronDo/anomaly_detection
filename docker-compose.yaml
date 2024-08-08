@@ -1,0 +1,29 @@
+version: '3.8'
+
+services:
+  postgres: 
+    image: postgres:latest
+    container_name: postgres
+    ports: 
+      - "5432:5432"
+    volumes:
+      - post_data:/var/lib/postgresql/data
+      - ./db/init/init.sql:/docker-entrypoint-initdb.d/init.sql 
+    environment:
+      - POSTGRES_PASSWORD=root
+    networks:
+      local:
+        ipv4_address: 192.168.1.10
+
+
+volumes:
+  post_data:
+
+networks:
+  local: 
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 192.168.1.0/24
+
+      
