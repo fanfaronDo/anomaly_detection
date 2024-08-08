@@ -3,7 +3,8 @@ package repository
 import (
 	"fmt"
 	"log"
-	"main/pkg/config"
+
+	"github.com/fanfaronDo/anomaly_detection/pkg/config"
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"

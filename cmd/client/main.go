@@ -5,13 +5,14 @@ import (
 	"flag"
 	"fmt"
 	"log"
-	pb "main/pkg/api/api/proto"
-	"main/pkg/config"
-	repo "main/pkg/repository"
 	"math"
 	"os"
 	"sync"
 	"time"
+
+	pb "github.com/fanfaronDo/anomaly_detection/pkg/api/api/proto"
+	"github.com/fanfaronDo/anomaly_detection/pkg/config"
+	repo "github.com/fanfaronDo/anomaly_detection/pkg/repository"
 
 	"google.golang.org/grpc"
 )

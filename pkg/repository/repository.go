@@ -1,7 +1,7 @@
 package repository
 
 import (
-	entry "main/pkg/api/api/proto"
+	entry "github.com/fanfaronDo/anomaly_detection/pkg/api/api/proto"
 
 	"gorm.io/gorm"
 )

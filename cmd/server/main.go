@@ -3,10 +3,11 @@ package main
 import (
 	"fmt"
 	"log"
-	api "main/pkg/api/api/proto"
 	"math/rand"
 	"net"
 	"time"
+
+	api "github.com/fanfaronDo/anomaly_detection/pkg/api/api/proto"
 
 	"github.com/google/uuid"
 	"google.golang.org/grpc"
