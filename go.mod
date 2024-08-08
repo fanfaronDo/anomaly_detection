@@ -1,4 +1,4 @@
-module main
+module github.com/fanfaronDo/anomaly_detection
 
 go 1.22.5
 
