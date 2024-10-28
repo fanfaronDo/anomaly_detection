@@ -1,0 +1,1 @@
+{"buildTargets":["build_client","build_server","build_test","clean","proto_generate"],"launchTargets":[],"customConfigurationProvider":{"workspaceBrowse":{"browsePath":[],"compilerArgs":[]},"fileIndex":[]}}
