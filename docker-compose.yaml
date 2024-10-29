@@ -19,7 +19,7 @@ services:
       timeout: 5s 
       retries: 5
 
-  server_generator_freq:
+  server_generator:
     build: 
       context: .
       dockerfile:

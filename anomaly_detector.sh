@@ -30,4 +30,4 @@ docker run --rm -it \
     -e DB_USER=$DB_USER \
     -e DB_PASSWORD=$DB_PASSWORD \
     -e DB_SSLMODE=$DB_SSLMODE \
-    test ./client -k $COEFFICIENT
+    vyachesdo/anomaly_detector:1.0 ./client -k $COEFFICIENT
