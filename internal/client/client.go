@@ -14,7 +14,7 @@ type Statistics struct {
 
 func (s *Statistics) DetectAnomaly(value float64, k float64) bool {
 	if s.Count < 2 {
-		return false // Not enough data to determine anomaly
+		return false
 	}
 
 	lowerBound := s.Mean - k*s.Std

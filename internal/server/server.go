@@ -32,6 +32,8 @@ func (serv *Server) GenerateData(stream api.DataService_GenerateDataServer) erro
 			return err
 		}
 
+		fmt.Printf("Sent Data: Session ID: %s, Frequency: %f, Timestamp: %d\n", sessionID, frequency, timestamp)
+
 		time.Sleep(1 * time.Second)
 	}
 }

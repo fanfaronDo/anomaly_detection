@@ -10,7 +10,9 @@ import (
 	"gorm.io/gorm"
 )
 
-func NewConnector(config config.Config) (*gorm.DB, error) {
+type Connector struct{}
+
+func (c *Connector) Connect(config *config.Config) (*gorm.DB, error) {
 	dsn := fmt.Sprintf("host=%s user=%s dbname=%s password=%s sslmode=%s",
 		config.DBHost,
 		config.DBUser,

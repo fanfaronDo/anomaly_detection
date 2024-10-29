@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"flag"
-	"fmt"
 	"log"
 	"os"
 	"sync"
@@ -13,9 +12,14 @@ import (
 	pb "github.com/fanfaronDo/anomaly_detection/pkg/api/api/proto"
 	"github.com/fanfaronDo/anomaly_detection/pkg/config"
 	repo "github.com/fanfaronDo/anomaly_detection/pkg/repository"
+	"gorm.io/gorm"
 
 	"google.golang.org/grpc"
 )
+
+type Connector interface {
+	Connect(c *config.Config) (*gorm.DB, error)
+}
 
 var (
 	logfileName = "anomaly_detection.log"
@@ -36,47 +40,37 @@ func main() {
 
 	myConfig, _ := config.LoadConfig()
 
-	logFile, err := os.OpenFile(logfileName, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0777)
-	if err != nil {
-		log.Fatal("Error opening logfile %s", logfileName)
-	}
-
-	defer logFile.Close()
-	wg := &sync.WaitGroup{}
-	wg.Add(1)
-	go Receiver(*flagK, *myConfig, logFile, wg)
-	wg.Wait()
-
-}
-
-func Receiver(k float64, cfg config.Config, logFile *os.File, wg *sync.WaitGroup) {
-	statistics := &client.Statistics{}
-	host := cfg.ServerTransmitterHost + ":" + string(cfg.ServerTransmitterPort)
+	host := myConfig.ServerTransmitterHost + ":" + string(myConfig.ServerTransmitterPort)
 	connectionToClient, err := grpc.Dial(host,
 		grpc.WithInsecure(),
 		grpc.WithBlock(),
 		grpc.WithTimeout(5*time.Second),
 	)
-	defer wg.Done()
-
 	if err != nil {
 		log.Fatalf("Failed to connect to the server: %v", err)
-		fmt.Errorf(logfileName, "Failed to connect to the server: %v\n", err)
-		os.Exit(1)
 	}
 	defer connectionToClient.Close()
-	log.Printf("Client connect to %s\n", host)
+	connector := Connector{}
+	conn, err := connector.Connect(myConfig)
+	if err != nil {
+		log.Fatalf("Errer connect to db %s\n", err)
+	}
 
-	defer func() {
-		log.Printf("Reciver is closed\n")
-		log.Printf("Client is closed\n")
-	}()
+	wg := &sync.WaitGroup{}
+	wg.Add(1)
+	go Receiver(*flagK, *myConfig, logFile, wg)
+	wg.Wait()
+}
+
+func Receiver(k float64, logFile *os.File, wg *sync.WaitGroup) {
+	statistics := &client.Statistics{}
+	defer wg.Done()
+
+	log.Printf("Client connect to %s\n", host)
 
 	conn, err := repo.NewConnector(cfg)
 	if err != nil {
 		log.Fatalf("Errer connect to db %s\n", err)
-		fmt.Fprintf(logFile, "Errer connect to db %s\n", err)
-		os.Exit(1)
 	}
 
 	r := repo.NewRepository(conn)
@@ -90,13 +84,11 @@ func Receiver(k float64, cfg config.Config, logFile *os.File, wg *sync.WaitGroup
 		entry, err := stream.Recv()
 		if err != nil {
 			log.Fatalf("error receiving data: %v", err)
-			fmt.Fprintf(logFile, "error receiving data: %v\n", err)
 		}
 
 		if statistics.DetectAnomaly(entry.Frequency, k) {
 			r.Create(*entry)
 			log.Printf("Received Data: Session ID: %s, Frequency: %f, Timestamp: %d\n", entry.SessionId, entry.Frequency, entry.Timestamp)
-			fmt.Fprintf(logFile, "Received Data: Session ID: %s, Frequency: %f, Timestamp: %d\n", entry.SessionId, entry.Frequency, entry.Timestamp)
 		}
 
 		statistics.Update(entry.Frequency)
