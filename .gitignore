@@ -16,7 +16,6 @@
 
 # Dependency directories (remove the comment below to include it)
 # vendor/
-deldoc.sh
 
 # Go workspace file
 go.work
