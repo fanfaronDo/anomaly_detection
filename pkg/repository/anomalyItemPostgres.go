@@ -20,7 +20,7 @@ func NewAnomalyItemPostgres(db *gorm.DB) *AnomalyItemPostgres {
 	return &AnomalyItemPostgres{db: db}
 }
 
-func (item *AnomalyItemPostgres) Create(entry entry.DataEntry) {
+func (item *AnomalyItemPostgres) Create(entry *entry.DataEntry) {
 	item.db.Create(&Transmitter{
 		SessionID: entry.SessionId,
 		Frequence: entry.Frequency,

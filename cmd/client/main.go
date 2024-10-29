@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"flag"
+	"fmt"
 	"log"
 	"os"
 	"sync"
@@ -11,6 +12,7 @@ import (
 	"github.com/fanfaronDo/anomaly_detection/internal/client"
 	pb "github.com/fanfaronDo/anomaly_detection/pkg/api/api/proto"
 	"github.com/fanfaronDo/anomaly_detection/pkg/config"
+	"github.com/fanfaronDo/anomaly_detection/pkg/db"
 	repo "github.com/fanfaronDo/anomaly_detection/pkg/repository"
 	"gorm.io/gorm"
 
@@ -49,34 +51,32 @@ func main() {
 	if err != nil {
 		log.Fatalf("Failed to connect to the server: %v", err)
 	}
+	log.Printf("Client connect to %s\n", host)
+
 	defer connectionToClient.Close()
-	connector := Connector{}
-	conn, err := connector.Connect(myConfig)
+
+	connector := db.NewBD(myConfig)
+	conn, err := connector.Connect()
+
 	if err != nil {
 		log.Fatalf("Errer connect to db %s\n", err)
 	}
+	fmt.Println(conn)
+
+	r := repo.NewRepository(conn)
+	client := pb.NewDataServiceClient(connectionToClient)
+	stream, err := client.GenerateData(context.Background())
 
 	wg := &sync.WaitGroup{}
 	wg.Add(1)
-	go Receiver(*flagK, *myConfig, logFile, wg)
+
+	go Receiver(*flagK, r, stream, wg)
 	wg.Wait()
 }
 
-func Receiver(k float64, logFile *os.File, wg *sync.WaitGroup) {
+func Receiver(k float64, r *repo.Repository, stream pb.DataService_GenerateDataClient, wg *sync.WaitGroup) {
 	statistics := &client.Statistics{}
 	defer wg.Done()
-
-	log.Printf("Client connect to %s\n", host)
-
-	conn, err := repo.NewConnector(cfg)
-	if err != nil {
-		log.Fatalf("Errer connect to db %s\n", err)
-	}
-
-	r := repo.NewRepository(conn)
-
-	client := pb.NewDataServiceClient(connectionToClient)
-	stream, err := client.GenerateData(context.Background())
 
 	log.Printf("Reciver is running...\n")
 	for {
@@ -87,7 +87,7 @@ func Receiver(k float64, logFile *os.File, wg *sync.WaitGroup) {
 		}
 
 		if statistics.DetectAnomaly(entry.Frequency, k) {
-			r.Create(*entry)
+			r.Create(entry)
 			log.Printf("Received Data: Session ID: %s, Frequency: %f, Timestamp: %d\n", entry.SessionId, entry.Frequency, entry.Timestamp)
 		}
 

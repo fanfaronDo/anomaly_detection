@@ -10,15 +10,17 @@ import (
 	"gorm.io/gorm"
 )
 
-type Connector struct{}
+type PostgresConnector struct {
+	conf *config.Config
+}
 
-func (c *Connector) Connect(config *config.Config) (*gorm.DB, error) {
+func (p *PostgresConnector) Connect() (*gorm.DB, error) {
 	dsn := fmt.Sprintf("host=%s user=%s dbname=%s password=%s sslmode=%s",
-		config.DBHost,
-		config.DBUser,
-		config.DBSchema,
-		config.DBPassword,
-		config.DBSSLMode)
+		p.conf.DBHost,
+		p.conf.DBUser,
+		p.conf.DBSchema,
+		p.conf.DBPassword,
+		p.conf.DBSSLMode)
 
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
@@ -26,4 +28,8 @@ func (c *Connector) Connect(config *config.Config) (*gorm.DB, error) {
 		return db, err
 	}
 	return db, nil
+}
+
+func NewPostgresConnector(config *config.Config) *PostgresConnector {
+	return &PostgresConnector{config}
 }

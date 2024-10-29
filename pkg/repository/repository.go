@@ -7,7 +7,7 @@ import (
 )
 
 type AnomalyItem interface {
-	Create(entry.DataEntry)
+	Create(entry *entry.DataEntry)
 	GetAll() ([]entry.DataEntry, error)
 }
 
