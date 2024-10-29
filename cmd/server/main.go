@@ -9,9 +9,9 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/fanfaronDo/anomaly_detection/internal/server"
 	api "github.com/fanfaronDo/anomaly_detection/pkg/api/api/proto"
 	"github.com/fanfaronDo/anomaly_detection/pkg/config"
+	"github.com/fanfaronDo/anomaly_detection/pkg/server"
 	"google.golang.org/grpc"
 )
 

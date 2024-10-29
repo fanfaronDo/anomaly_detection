@@ -16,4 +16,4 @@ WORKDIR /app
 COPY --from=builder /app/client .
 RUN chmod +x client
 
-CMD ["./client"]
+CMD ["/app/client"]

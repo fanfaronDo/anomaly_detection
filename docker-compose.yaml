@@ -9,7 +9,7 @@ services:
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_DATABASE: ${POSTGRES_DATABASE}
+      POSTGRES_DATABASE: anomaly
       POSTGRES_SSL_MODE: disable
     networks:
       - transmitter_network
@@ -35,27 +35,6 @@ services:
 
 networks:
   transmitter_network:
-
-
-
-  # transmitter:
-  #   build:
-  #     context: .
-  #     dockerfile:
-  #       ./cmd/client/Dockerfile
-  #   container_name: transmitter
-  #   environment:
-  #     SERVER_TRANSMITTER_HOST: server_generator
-  #     SERVER_TRANSMITTER_PORT: 8000
-  #     DB_HOST: postgres
-  #     DB_PORT: 5432
-  #     DB_SCHEMA: anomaly
-  #     DB_USER: ${POSTGRES_USER}
-  #     DB_PASSWORD: ${POSTGRES_PASSWORD}
-  #     DB_SSLMODE: disable
-    
-  #   depends_on:
-  #     - postgres
 
 
 

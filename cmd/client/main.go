@@ -9,8 +9,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/fanfaronDo/anomaly_detection/internal/client"
 	pb "github.com/fanfaronDo/anomaly_detection/pkg/api/api/proto"
+	"github.com/fanfaronDo/anomaly_detection/pkg/client"
 	"github.com/fanfaronDo/anomaly_detection/pkg/config"
 	"github.com/fanfaronDo/anomaly_detection/pkg/db"
 	repo "github.com/fanfaronDo/anomaly_detection/pkg/repository"

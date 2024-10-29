@@ -16,4 +16,4 @@ WORKDIR /app
 COPY --from=builder /app/server .
 RUN chmod +x server
 
-CMD ["./server"]
+CMD ["/app/server"]
